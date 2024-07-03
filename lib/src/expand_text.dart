@@ -191,61 +191,56 @@ class _ExpandTextState extends State<ExpandText>
             style: defaultTextStyle,
           ),
           textDirection: TextDirection.ltr,
-          maxLines: widget.maxLines,
+          // maxLines: widget.maxLines,
         )..layout(maxWidth: size.maxWidth);
 
-        return textPainter.didExceedMaxLines
-            ? Column(
-                crossAxisAlignment: widget.expandWidth
-                    ? CrossAxisAlignment.stretch
-                    : CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedSize(
-                    duration: widget.animationDuration,
-                    alignment: Alignment.topCenter,
-                    curve: Curves.easeInOutCubic,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(),
-                      child: GestureDetector(
-                        onTap: widget.expandOnGesture ? _handleTap : null,
-                        onVerticalDragEnd:
-                            widget.expandOnGesture ? _handleTap : null,
-                        child: child,
+        return Column(
+          crossAxisAlignment: widget.expandWidth
+              ? CrossAxisAlignment.stretch
+              : CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedSize(
+              duration: widget.animationDuration,
+              alignment: Alignment.topCenter,
+              curve: Curves.easeInOutCubic,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(),
+                child: GestureDetector(
+                  onTap: widget.expandOnGesture ? _handleTap : null,
+                  onVerticalDragEnd: widget.expandOnGesture ? _handleTap : null,
+                  child: child,
+                ),
+              ),
+            ),
+            ClipRect(
+              child: Align(
+                alignment: widget.indicatorAlignment ?? Alignment.center,
+                heightFactor:
+                    widget.hideIndicatorOnExpand ? 1 - _heightFactor.value : 1,
+                child: widget.indicatorBuilder != null
+                    ? widget.indicatorBuilder!(
+                        context,
+                        _handleTap,
+                        _isExpanded,
+                      )
+                    : ExpandIndicator(
+                        animation: _iconTurns,
+                        expandIndicatorStyle: widget.expandIndicatorStyle,
+                        collapsedHint: widget.indicatorCollapsedHint,
+                        onTap: _handleTap,
+                        expandedHint: widget.indicatorExpandedHint,
+                        padding: widget.indicatorPadding,
+                        iconColor: widget.indicatorIconColor,
+                        iconSize: widget.indicatorIconSize,
+                        icon: widget.indicatorIcon,
+                        hintTextStyle: widget.indicatorHintTextStyle,
+                        capitalizeHintText: widget.capitalizeIndicatorHintText,
                       ),
-                    ),
-                  ),
-                  ClipRect(
-                    child: Align(
-                      alignment: widget.indicatorAlignment ?? Alignment.center,
-                      heightFactor: widget.hideIndicatorOnExpand
-                          ? 1 - _heightFactor.value
-                          : 1,
-                      child: widget.indicatorBuilder != null
-                          ? widget.indicatorBuilder!(
-                              context,
-                              _handleTap,
-                              _isExpanded,
-                            )
-                          : ExpandIndicator(
-                              animation: _iconTurns,
-                              expandIndicatorStyle: widget.expandIndicatorStyle,
-                              collapsedHint: widget.indicatorCollapsedHint,
-                              onTap: _handleTap,
-                              expandedHint: widget.indicatorExpandedHint,
-                              padding: widget.indicatorPadding,
-                              iconColor: widget.indicatorIconColor,
-                              iconSize: widget.indicatorIconSize,
-                              icon: widget.indicatorIcon,
-                              hintTextStyle: widget.indicatorHintTextStyle,
-                              capitalizeHintText:
-                                  widget.capitalizeIndicatorHintText,
-                            ),
-                    ),
-                  ),
-                ],
-              )
-            : child;
+              ),
+            ),
+          ],
+        );
       },
     );
   }
